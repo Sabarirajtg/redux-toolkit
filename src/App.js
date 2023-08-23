@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRandomQuote, resetState } from "./redux/quotesSlice";
 
-function App() {
+const QuoteDisplay = () => {
+  const dispatch = useDispatch();
+  const { loading, error, quote } = useSelector((state) => state.quotes);
+
+  useEffect(() => {
+    dispatch(fetchRandomQuote());
+
+    // Optionally, reset the state when the component unmounts
+    return () => {
+      dispatch(resetState());
+    };
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Random Quote</h1>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
+      {quote && (
+        <div>
+          <p>Text: {quote.content}</p>
+          <p>Author: {quote.author}</p>
+          {/* Other quote data */}
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default App;
+export default QuoteDisplay;
